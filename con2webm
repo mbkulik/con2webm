@@ -1,7 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 directory=$1
-listed=$( ls $1 )
+
+listed=$( ls $directory )
 
 for i in $listed; do
     if [[ $i == *".mp4" ]]; then
