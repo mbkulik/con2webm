@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+directory=$1
+listed=$( ls $1 )
+
+for i in $listed; do
+    if [[ $i == *".mp4" ]]; then
+        
+        mp4path="${directory}/${i}"
+        webmpath=${mp4path/.mp4/.webm}
+
+        if [ -f $webmpath ]; then
+            echo "$webmpath already exists, skipping conversion"
+        else
+            ffmpeg -i $mp4path -f webm -vcodec libvpx_vp8 \
+            -acodec libvorbis -ab 160000 -sameq $webmpath
+        fi
+    fi
+done
