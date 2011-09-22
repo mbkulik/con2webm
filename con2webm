@@ -2,13 +2,17 @@
 
 directory=$1
 
-listed=$( ls $directory )
+listed=`ls $directory`
 
 for i in $listed; do
-    if [[ $i == *".mp4" ]]; then
+    if [ $i != ${i/.mp4/} ]; then
         
         mp4path="${directory}/${i}"
         webmpath=${mp4path/.mp4/.webm}
+
+	echo $mp4path
+	echo $webmpath
+
 
         if [ -f $webmpath ]; then
             echo "$webmpath already exists, skipping conversion"
