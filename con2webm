@@ -1,22 +1,30 @@
 #!/usr/bin/env ksh
 
-directory=$1
-listed=`ls $directory`
+# get the mpeg files to convert either a directory listing or
+# a single file
+if [ -d $1 ]; then
+    mpeg_files=`ls $1/*`
+else
+    mpeg_files=$1
+fi
 
+# some platform dependent trickery for the version
+# of ffmpeg that is installed with miro video converter on
+# macosx
 if [ `uname` == "Darwin" ]; then
     vpx_flag="libvpx_vp8"
 else
     vpx_flag="libvpx"
 fi
 
-for i in $listed; do
+# convert each mpeg file to webm
+for i in $mpeg_files; do
     if [[ "$i" = @(*.mp4|*.m4v) ]]; then
 
-        mpegpath="${directory}/${i}"
-        webmpath=${mpegpath%@(*.mp4|*.m4v)}.webm
+        webmpath=${i%@(*.mp4|*.m4v)}.webm
         
         if [ ! -f $webmpath ]; then
-            ffmpeg -i $mpegpath -f webm -vcodec $vpx_flag \
+            ffmpeg -i $i -f webm -vcodec $vpx_flag \
             -acodec libvorbis -ab 160000 -sameq $webmpath
         fi
     fi
