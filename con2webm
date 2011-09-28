@@ -1,23 +1,22 @@
-#!/bin/sh
+#!/usr/bin/env ksh
 
 directory=$1
-
 listed=`ls $directory`
 
+if [ `uname` == "Darwin" ]; then
+    vpx_flag="libvpx_vp8"
+else
+    vpx_flag="libvpx"
+fi
+
 for i in $listed; do
-    if [ $i != ${i/.mp4/} ]; then
+    if [[ "$i" = @(*.mp4|*.m4v) ]]; then
+
+        mpegpath="${directory}/${i}"
+        webmpath=${mpegpath%@(*.mp4|*.m4v)}.webm
         
-        mp4path="${directory}/${i}"
-        webmpath=${mp4path/.mp4/.webm}
-
-	echo $mp4path
-	echo $webmpath
-
-
-        if [ -f $webmpath ]; then
-            echo "$webmpath already exists, skipping conversion"
-        else
-            ffmpeg -i $mp4path -f webm -vcodec libvpx_vp8 \
+        if [ ! -f $webmpath ]; then
+            ffmpeg -i $mpegpath -f webm -vcodec $vpx_flag \
             -acodec libvorbis -ab 160000 -sameq $webmpath
         fi
     fi
