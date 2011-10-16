@@ -1,5 +1,4 @@
-A simple ksh script that converts all the mpeg videos in a folder to webm using ffmpeg.
+A simple script to automate video conversion.
 
 Tested on:
 - Mac OS X 10.6.8 with the ffmpeg from Miro Video Conveter http://www.mirovideoconverter.com
-- OpenBSD 5.0-snapshot 9/28/2011
