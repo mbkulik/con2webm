@@ -9,14 +9,7 @@ def convert( video_file )
         webm_movie[/\.mp4|\.m4v/] = '.webm'
 
         if File.exists?( webm_movie ) == false
-            vpx_flag = 'libvpx'
-        
-
-            if RUBY_PLATFORM =~ /darwin/
-                vpx_flag = 'libvpx_vp8'
-            end
-
-            system("ffmpeg -i #{mpeg_movie} -f webm -vcodec #{vpx_flag} \
+            system("ffmpeg -i #{mpeg_movie} -f webm -vcodec libvpx  \
             -acodec libvorbis -ab 160000 -sameq #{webm_movie}")
         end
     end
