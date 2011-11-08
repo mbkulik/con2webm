@@ -1,4 +1,6 @@
 A simple script to automate video conversion.
 
 Tested on:
-- Mac OS X 10.6.8 with the ffmpeg from Miro Video Conveter http://www.mirovideoconverter.com
+- Mac OS X 10.6.8 with the static ffmpeg binary distributed with miro video converter 2.5 (www.mirovideoconverter.com)
+
+- OpenBSD 5.0 amd64 with ffmpeg from packages
