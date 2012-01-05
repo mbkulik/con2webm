@@ -10,7 +10,7 @@ def convert( video_file )
 
         if File.exists?( webm_movie ) == false
             system("ffmpeg -i #{mpeg_movie} -f webm -vcodec libvpx  \
-            -acodec libvorbis -ab 160000 -sameq #{webm_movie}")
+            -acodec libvorbis -ab 160000 -crf 22 #{webm_movie}")
         end
     end
 end
