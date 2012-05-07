@@ -5,29 +5,28 @@ require 'ffprober'
 
 def convert( video_file )
     
-    if video_file =~ /\.mp4|\.m4v/
-        mpeg_movie = String.new(video_file)
-        webm_movie = String.new(video_file)
+	if video_file =~ /\.mp4|\.m4v/
+		mpeg_movie = String.new(video_file)
+		webm_movie = String.new(video_file)
 
-        webm_movie[/\.mp4|\.m4v/] = '.webm'
+		webm_movie[/\.mp4|\.m4v/] = '.webm'
 
 		ffprobe = Ffprober::Parser.from_file(mpeg_movie)
 
-        if File.exists?( webm_movie ) == false
-            system("ffmpeg -i #{mpeg_movie} -threads 8 -f webm \
+		if File.exists?( webm_movie ) == false
+			system("ffmpeg -i #{mpeg_movie} -threads 8 -f webm \
 			-vcodec libvpx -filter:v yadif -g 120 -level 216 -qmax 42 \
 			-qmin 10 -rc_buf_aggressivity 0.95 \
 			-vb #{ffprobe.format.bit_rate} -acodec libvorbis \
 			-ac 2 #{webm_movie}")
-        end
-    end
+		end
+	end
 end
 
-
 ARGV.each do |arg|
-    if File.directory?( arg )
-        Dir.foreach(arg) { |d| convert(arg + d) }
-    else
-        convert( arg )
-    end
+	if File.directory?( arg )
+		Dir.foreach(arg) { |d| convert(arg + d) }
+	else
+		convert( arg )
+	end
 end
