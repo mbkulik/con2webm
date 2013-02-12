@@ -15,11 +15,33 @@ def convert( video_file )
 		ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_movie))
 
 		if File.exists?( webm_movie ) == false
-			system("ffmpeg -i #{Shellwords.escape(mpeg_movie)} -threads 8 -f webm \
-			-vcodec libvpx -filter:v yadif -g 120 -level 216 -qmax 42 \
-			-qmin 10 -rc_buf_aggressivity 0.95 \
-			-vb #{ffprobe.format.bit_rate} -acodec libvorbis \
-			-ac 2 #{Shellwords.escape(webm_movie)}")
+			if ffprobe.video_streams.count == 1 and ffprobe.audio_streams.count == 1
+				video_stream = ffprobe.video_streams[0]
+				audio_stream = ffprobe.audio_streams[0]
+
+				system("ffmpeg -i #{Shellwords.escape(mpeg_movie)} \
+					-threads 8 \
+					-f webm \
+					-vcodec libvpx \
+					-g 120 \
+					-level #{video_stream.level} \
+					-qmax 42 \
+					-qmin 10 \
+					-vb #{video_stream.bit_rate} \
+					-acodec libvorbis \
+					#{Shellwords.escape(webm_movie)}")
+			end
+
+			#if ffprobe.video_streams.count == 1
+			#	vid_level = ffprobe.video_streams[0].level
+
+
+			#system("ffmpeg -i #{Shellwords.escape(mpeg_movie)} -threads 8 -f webm \
+			#-vcodec libvpx -g 120 -level #{vid_level} -qmax 42 \
+			#-qmin 10 -rc_buf_aggressivity 0.95 \
+			#-vb #{ffprobe.format.bit_rate} -acodec libvorbis \
+			#-ac 2 #{Shellwords.escape(webm_movie)}")
+			#end
 		end
 	end
 end
