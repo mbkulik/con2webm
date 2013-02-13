@@ -4,6 +4,11 @@ require 'rubygems'
 require 'ffprober'
 require 'shellwords'
 
+$num_cpus = 2
+$qmin = 10
+$qmax = 42
+$gval = 120
+
 def convert( video_file )
     
 	if video_file =~ /\.mp4|\.m4v/
@@ -15,20 +20,18 @@ def convert( video_file )
 		ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_movie))
 
 		if File.exists?( webm_movie ) == false
-			if ffprobe.video_streams.count == 1 and ffprobe.audio_streams.count == 1
+			if ffprobe.video_streams.count == 1
 				video_stream = ffprobe.video_streams[0]
-				audio_stream = ffprobe.audio_streams[0]
 
 				system("ffmpeg -i #{Shellwords.escape(mpeg_movie)} \
-					-threads 8 \
-					-f webm \
-					-vcodec libvpx \
-					-g 120 \
+					-codec:v libvpx \
+					-threads #{$num_cpus} \
+					-g #{$gval} \
 					-level #{video_stream.level} \
-					-qmax 42 \
-					-qmin 10 \
-					-vb #{video_stream.bit_rate} \
-					-acodec libvorbis \
+					-qmax #{$qmax} \
+					-qmin #{$qmin} \
+					-b:v #{video_stream.bit_rate} \
+					-codec:a libvorbis \
 					#{Shellwords.escape(webm_movie)}")
 			end
 		end
