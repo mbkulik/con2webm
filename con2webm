@@ -9,21 +9,22 @@ $qmin = 10
 $qmax = 42
 $gval = 120
 
-def convert( video_file )
-    
-	if video_file =~ /\.mp4|\.m4v/
-		mpeg_movie = String.new(video_file)
-		webm_movie = String.new(video_file)
+def convert( mpeg_file )
 
-		webm_movie[/\.mp4|\.m4v/] = '.webm'
+	valid_extensions = ['.mp4', '.m4v']
+	extension = File.extname(mpeg_file)
 
-		ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_movie))
+	if valid_extensions.include?(extension)
 
-		if File.exists?( webm_movie ) == false
-			if ffprobe.video_streams.count == 1
+		ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_file))
+
+		webm_file = String.new(mpeg_file).sub(extension,'.webm')
+
+		unless File.exists?(webm_file)
+			unless ffprobe.video_streams[0].nil?
 				video_stream = ffprobe.video_streams[0]
 
-				system("ffmpeg -i #{Shellwords.escape(mpeg_movie)} \
+				system("ffmpeg -i #{Shellwords.escape(mpeg_file)} \
 					-codec:v libvpx \
 					-threads #{$num_cpus} \
 					-g #{$gval} \
@@ -32,8 +33,8 @@ def convert( video_file )
 					-qmin #{$qmin} \
 					-b:v #{video_stream.bit_rate} \
 					-codec:a libvorbis \
-					#{Shellwords.escape(webm_movie)}")
-			end
+					#{Shellwords.escape(webm_file)}")	
+			end	
 		end
 	end
 end
