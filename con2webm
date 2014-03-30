@@ -11,38 +11,38 @@ $gval = 120
 
 def convert( mpeg_file )
 
-	valid_extensions = ['.mp4', '.m4v']
-	extension = File.extname(mpeg_file)
+  valid_extensions = ['.mp4', '.m4v']
+  extension = File.extname(mpeg_file)
 
-	if valid_extensions.include?(extension)
+  if valid_extensions.include?(extension)
 
-		ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_file))
+    ffprobe = Ffprober::Parser.from_file(Shellwords.escape(mpeg_file))
 
-		webm_file = String.new(mpeg_file).sub(extension,'.webm')
+    webm_file = String.new(mpeg_file).sub(extension,'.webm')
 
-		unless File.exists?(webm_file)
-			unless ffprobe.video_streams[0].nil?
-				video_stream = ffprobe.video_streams[0]
+    unless File.exists?(webm_file)
+      unless ffprobe.video_streams[0].nil?
+        video_stream = ffprobe.video_streams[0]
 
-				system("ffmpeg -i #{Shellwords.escape(mpeg_file)} \
-					-codec:v libvpx \
-					-threads #{$num_cpus} \
-					-g #{$gval} \
-					-level #{video_stream.level} \
-					-qmax #{$qmax} \
-					-qmin #{$qmin} \
-					-b:v #{video_stream.bit_rate} \
-					-codec:a libvorbis \
-					#{Shellwords.escape(webm_file)}")	
-			end	
-		end
-	end
+        system("ffmpeg -i #{Shellwords.escape(mpeg_file)} \
+                -codec:v libvpx \
+                -threads #{$num_cpus} \
+                -g #{$gval} \
+                -level #{video_stream.level} \
+                -qmax #{$qmax} \
+                -qmin #{$qmin} \
+                -b:v #{video_stream.bit_rate} \
+                -codec:a libvorbis \
+                #{Shellwords.escape(webm_file)}")
+      end
+    end
+  end
 end
 
 ARGV.each do |arg|
-	if File.directory?( arg )
-		Dir.foreach(arg) { |d| convert(arg + d) }
-	else
-		convert( arg )
-	end
+  if File.directory?( arg )
+    Dir.foreach(arg) { |d| convert(arg + d) }
+  else
+    convert( arg )
+  end
 end
